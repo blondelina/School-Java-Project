@@ -2,6 +2,7 @@
 2nd year laboratory project using java
 ****
 GUI done using javafx Gradle build
+
 Project main idea: Hospital management system with data kept in a .txt file
 ***
 Functionalities:
