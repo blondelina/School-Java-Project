@@ -1,5 +1,4 @@
 package view;
-
 import controller.Controller;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -7,26 +6,30 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.util.StringConverter;
 import model.Appointment;
 import model.Patient;
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
+
 
 public class UI implements Initializable {
 
     Controller controller;
-    private ObservableList<Patient> list ;
-    private ObservableList<Patient> list1 ;
+    private final ObservableList<Patient> list ;
+    private final ObservableList<Patient> data_list;
 
-    @FXML private ComboBox hour;
-    @FXML private ComboBox min;
+    @FXML private ComboBox<String> hour;
+    @FXML private ComboBox<String> min;
     @FXML private TextField Id;
     @FXML private DatePicker d;
     @FXML private TextArea r;
 
-    @FXML private ComboBox hour1;
-    @FXML private ComboBox min1;
-    @FXML private DatePicker d1;
+    @FXML private ComboBox<String> delete_hour;
+    @FXML private ComboBox<String> delete_min;
+    @FXML private DatePicker delete_date;
 
     @FXML private TextField lname;
     @FXML private TextField fname;
@@ -109,17 +112,84 @@ public class UI implements Initializable {
     private TableColumn<Appointment,String> reason1;
 
 
-
     public UI()  {
         controller = new Controller();
         list = FXCollections.observableArrayList();
-        list1 = FXCollections.observableArrayList();
+        data_list = FXCollections.observableArrayList();
     }
-
 
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
+        report_date.setConverter(new StringConverter<LocalDate>() {
+            final String pattern = "yyyy-MM-dd";
+            final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(pattern);
+
+            @Override
+            public String toString(LocalDate date) {
+                if (date != null) {
+                    return dateFormatter.format(date);
+                } else {
+                    return "";
+                }
+            }
+
+            @Override
+            public LocalDate fromString(String string) {
+                if (string != null && !string.isEmpty()) {
+                    return LocalDate.parse(string, dateFormatter);
+                } else {
+                    return null;
+                }
+            }
+        });
+
+        delete_date.setConverter(new StringConverter<LocalDate>() {
+            final String pattern = "yyyy-MM-dd";
+            final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(pattern);
+
+            @Override
+            public String toString(LocalDate date) {
+                if (date != null) {
+                    return dateFormatter.format(date);
+                } else {
+                    return "";
+                }
+            }
+
+            @Override
+            public LocalDate fromString(String string) {
+                if (string != null && !string.isEmpty()) {
+                    return LocalDate.parse(string, dateFormatter);
+                } else {
+                    return null;
+                }
+            }
+        });
+
+        d.setConverter(new StringConverter<LocalDate>() {
+            final String pattern = "yyyy-MM-dd";
+            final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(pattern);
+
+            @Override
+            public String toString(LocalDate date) {
+                if (date != null) {
+                    return dateFormatter.format(date);
+                } else {
+                    return "";
+                }
+            }
+
+            @Override
+            public LocalDate fromString(String string) {
+                if (string != null && !string.isEmpty()) {
+                    return LocalDate.parse(string, dateFormatter);
+                } else {
+                    return null;
+                }
+            }
+        });
 
         min.getItems().setAll(
                 "00",
@@ -138,7 +208,7 @@ public class UI implements Initializable {
                 "21","22","23"
         );
 
-        min1.getItems().setAll(
+        delete_min.getItems().setAll(
                 "00",
                 "01","02","03","04","05","06","07","08","09","10",
                 "11","12","13","14","15","16","17","18","19","20",
@@ -148,7 +218,7 @@ public class UI implements Initializable {
                 "51","52","53","54","55","56","57","58","59"
         );
 
-        hour1.getItems().setAll(
+        delete_hour.getItems().setAll(
                 "00",
                 "01","02","03","04","05","06","07","08","09","10",
                 "11","12","13","14","15","16","17","18","19","20",
@@ -171,8 +241,7 @@ public class UI implements Initializable {
         this.time1.setCellValueFactory(new PropertyValueFactory<Appointment, String>("appointment_time"));
         this.reason1.setCellValueFactory(new PropertyValueFactory<Appointment, String>("appointment_reason"));
 
-        for (Patient elem : controller.getAll())
-            list.add(elem);
+        list.addAll(controller.getAll());
 
         PatientTable.setItems(list);
     }
@@ -189,7 +258,6 @@ public class UI implements Initializable {
     {
         try {
             Patient p = new Patient(fname.getText(), lname.getText(), Integer.parseInt(ID.getText()), phnumber.getText());
-
             controller.addPatient(p);
             list.add(p);
             PatientTable.setItems(list);
@@ -218,9 +286,7 @@ public class UI implements Initializable {
     {
 
         try {
-                String[] l = this.d.getValue().toString().split("-");
-                System.out.println(ID.getText());
-                controller.addAppointment(Integer.parseInt(this.Id.getText()), l[2] + "/" + l[1] + "/" + l[0], this.hour.getValue().toString() + ":" + this.min.getValue().toString(), this.r.getText());
+                controller.addAppointment(Integer.parseInt(this.Id.getText()), this.d.getValue(), this.hour.getValue().toString() + ":" + this.min.getValue().toString(), this.r.getText());
                 errorLabel2.setText("");
                 Id.clear();
                 r.clear();
@@ -247,12 +313,12 @@ public class UI implements Initializable {
     public void CancelAppointment()
     {
         try {
-            String[] l = this.d1.getValue().toString().split("-");
-            controller.cancelAppointment( l[2] + "/" + l[1] + "/" + l[0], this.hour1.getValue().toString() + ":" + this.min1.getValue().toString() );
+
+            controller.cancelAppointment( delete_date.getValue(), this.delete_hour.getValue().toString() + ":" + this.delete_min.getValue().toString() );
             errorLabel3.setText("");
-            hour1.valueProperty().set(null);
-            min1.valueProperty().set(null);
-            d1.valueProperty().set(null);
+            delete_hour.valueProperty().set(null);
+            delete_min.valueProperty().set(null);
+            delete_date.valueProperty().set(null);
             updateTable();
         }
         catch(NullPointerException e)
@@ -291,27 +357,27 @@ public class UI implements Initializable {
     @FXML
     public void CheckupsOrderedReportButton()
     {
-        if(!list1.isEmpty())
-            list1.clear();
+        if(!data_list.isEmpty())
+            data_list.clear();
         try{
-            this.list1.addAll(controller.CheckupsOrderedStream());
+            this.data_list.addAll(controller.CheckupsOrderedStream());
             errorLabel5.setText("");
         }
         catch (RuntimeException e)
         {
             errorLabel5.setText(String.valueOf(e.getMessage()));
         }
-        PatientTable1.setItems(list1);
+        PatientTable1.setItems(data_list);
 
     }
 
     @FXML
     public void ImportantMedicalProblemsReportButton()
     {
-        if(!list1.isEmpty())
-            list1.clear();
+        if(!data_list.isEmpty())
+            data_list.clear();
         try {
-            this.list1.addAll(controller.ImportantMedicalProblemsStream());
+            this.data_list.addAll(controller.ImportantMedicalProblemsStream());
             errorLabel6.setText("");
         }
         catch (RuntimeException e)
@@ -319,19 +385,18 @@ public class UI implements Initializable {
             errorLabel6.setText(String.valueOf(e.getMessage()));
 
         }
-        PatientTable1.setItems(list1);
+        PatientTable1.setItems(data_list);
 
     }
 
     @FXML
     public void AppointmentsOnDateReportButton()
     {
-        if(!list1.isEmpty())
-            list1.clear();
+        if(!data_list.isEmpty())
+            data_list.clear();
 
         try {
-            String[] l = this.report_date.getValue().toString().split("-");
-            this.list1.addAll(controller.AppointmentsOnDateReportStream(l[2] + "/" + l[1] + "/" + l[0]));
+            this.data_list.addAll(controller.AppointmentsOnDateReportStream(this.report_date.getValue()));
             errorLabel7.setText("");
         }
         catch(NullPointerException e)
@@ -343,7 +408,7 @@ public class UI implements Initializable {
             errorLabel7.setText(String.valueOf(e.getMessage()));
         }
 
-        PatientTable1.setItems(list1);
+        PatientTable1.setItems(data_list);
     }
 
 

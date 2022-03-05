@@ -3,11 +3,11 @@ import model.Patient;
 import repository.PatientRepositoryFile;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.Properties;
+import java.util.Comparator;
+
 
 public class Controller implements ControllerInterface {
 
@@ -35,12 +35,12 @@ public class Controller implements ControllerInterface {
     }
 
     @Override
-    public void addAppointment(int id, String ap_date, String ap_time, String reason) {
+    public void addAppointment(int id, LocalDate ap_date, String ap_time, String reason) {
         repo.addAppointment(id,ap_date,ap_time,reason);
     }
 
     @Override
-    public void cancelAppointment(String ap_date, String ap_time) {
+    public void cancelAppointment(LocalDate ap_date, String ap_time) {
         repo.cancelAppointment(ap_date,ap_time);
     }
 
@@ -55,59 +55,32 @@ public class Controller implements ControllerInterface {
         return repo.getRepo();
     }
 
-    public List<Patient> AppointmentsOnDateReportStream(String date)
+    public List<Patient> AppointmentsOnDateReportStream(LocalDate date)
     {
-        List<Patient> p= repo.getRepo().stream().filter(x-> Objects.equals(x.getAppointment_date(), date)).collect(Collectors.toList());
-
-        if(p.size()==0)
+        List<Patient> appointments_on_date= repo.getRepo().stream().filter(x-> Objects.equals(x.getAppointment_date(), date)).collect(Collectors.toList());
+        if(appointments_on_date.size()==0)
             throw new RuntimeException("No appointments on this date...");
         else
-            return p;
+            return appointments_on_date;
     }
-
-
-    public String PhoneNumberOfPatientStream(String firstname, String lastname)
-    {
-        List<Patient> p = repo.getRepo().stream().filter(x -> Objects.equals(x.getLastName(), lastname) && Objects.equals(x.getFirstName(), firstname)).collect(Collectors.toList());
-        if (p.size() == 0)
-            throw new RuntimeException("No patient found...");
-        else
-            return p.get(0).getPhone_number();
-
-    }
-
-    public String EarliestAppointmentStream()
-    {
-        List l= repo.getRepo().stream().map(x-> repo.Swapped(x.getAppointment_date()) +" "+ x.getAppointment_time()).sorted().collect(Collectors.toList());
-        int i=0;
-        while(l.get(i).toString().trim().length()==0)
-            i++;
-        if(i==repo.getRepo().size())
-            throw new RuntimeException("No appointments found...");
-        else
-            return repo.Swapped(l.get(i).toString().split("\s")[0])+" "+l.get(i).toString().split("\s")[1]+"\n";
-
-    }
-
 
     public List<Patient> ImportantMedicalProblemsStream()
     {
-        List<Patient> l=repo.getRepo().stream().filter(x-> !Objects.equals(x.getAppointment_reason(), "checkup") && !Objects.equals(x.getAppointment_date(), "")).collect(Collectors.toList());
-        if(l.size()==0)
+        List<Patient> important_medical_problems=repo.getRepo().stream().filter(x-> !Objects.equals(x.getAppointment_reason(), "checkup") && !Objects.equals(x.getAppointment_date(), null)).collect(Collectors.toList());
+        if(important_medical_problems.size()==0)
             throw new RuntimeException("No important medical problems...");
         else
-            return l;
+            return important_medical_problems;
     }
 
 
     public List<Patient> CheckupsOrderedStream()
     {
-        List<Patient> a=repo.getRepo().stream().filter(x-> Objects.equals(x.getAppointment_reason(), "checkup")).collect(Collectors.toList());
-        List l= a.stream().map(x-> repo.Swapped(x.getAppointment_date()) +" "+ x.getAppointment_time()).sorted().collect(Collectors.toList());
-
-        if(l.size()==0)
+        List<Patient> checkups=repo.getRepo().stream().filter(x-> Objects.equals(x.getAppointment_reason(), "checkup")).collect(Collectors.toList());
+        List<Patient> ordered_checkups=checkups.stream().sorted(Comparator.comparing(Patient::getAppointment_date).thenComparing(Patient::getAppointment_time)).collect(Collectors.toList());
+        if(checkups.size()==0)
             throw new RuntimeException("No checkups...");
-        else return a;
+        else return ordered_checkups;
 
     }
 }

@@ -1,8 +1,8 @@
 package repository;
-
 import model.Patient;
-
+import java.time.LocalDate;
 import java.util.*;
+
 
 public class PatientRepository implements Repository {
 
@@ -15,8 +15,8 @@ public class PatientRepository implements Repository {
     @Override
     public void addPatient(Patient p)
     {
-        for(int i=0;i<dentistPatients.size();i++) {
-            if (p.getId() == dentistPatients.get(i).getId())
+        for (Patient dentistPatient : dentistPatients) {
+            if (p.getId() == dentistPatient.getId())
                 throw new RuntimeException("Id already exists in the repository...\n");
 
         }
@@ -24,86 +24,61 @@ public class PatientRepository implements Repository {
     }
 
     @Override
-    public void addAppointment(int id,String ap_date,String ap_time,String reason)
+    public void addAppointment(int id, LocalDate ap_date, String ap_time, String reason)
     {
-        int index=-1;
+        int found=-1;
         for(int i=0;i<dentistPatients.size();i++) {
-            if (id == dentistPatients.get(i).getId()) index=i;
+            if (id == dentistPatients.get(i).getId()) found=i;
             if(Objects.equals(dentistPatients.get(i).getAppointment_time(), ap_time) && Objects.equals(dentistPatients.get(i).getAppointment_date(), ap_date)) {
                 throw new RuntimeException("Appointment time and date taken...");
             }
 
 
             }
-        if(index>-1) {
-            dentistPatients.get(index).setAppointment_date(ap_date);
-            dentistPatients.get(index).setAppointment_time(ap_time);
-            dentistPatients.get(index).setAppointment_reason(reason);
+        if(found>-1) {
+            dentistPatients.get(found).setAppointment_date(ap_date);
+            System.out.println(ap_date);
+            dentistPatients.get(found).setAppointment_time(ap_time);
+            dentistPatients.get(found).setAppointment_reason(reason);
         }
         else throw new RuntimeException("Patient not found...");
 
     }
 
     @Override
-    public void cancelAppointment(String ap_date,String ap_time)
+    public void cancelAppointment(LocalDate ap_date,String ap_time)
     {
         boolean found=false;
-        for(int i=0;i<dentistPatients.size();i++)
-            if(Objects.equals(dentistPatients.get(i).getAppointment_time(), ap_time) && Objects.equals(dentistPatients.get(i).getAppointment_date(), ap_date)) {
-                dentistPatients.get(i).setAppointment_time("");
-                dentistPatients.get(i).setAppointment_date("");
-                dentistPatients.get(i).setAppointment_reason("");
-                found=true;
+        for (Patient dentistPatient : dentistPatients)
+            if (Objects.equals(dentistPatient.getAppointment_time(), ap_time) && Objects.equals(dentistPatient.getAppointment_date(), ap_date)) {
+                dentistPatient.setAppointment_time(null);
+                dentistPatient.setAppointment_date(null);
+                dentistPatient.setAppointment_reason("");
+                found = true;
             }
         if(!found)
             throw new RuntimeException("Appointment doesn't exist...");
     }
 
+
     @Override
     public void deletePatient(int id) {
-        int index=-1;
+        int found=-1;
         for(int i=0;i<dentistPatients.size();i++)
-            if (id == dentistPatients.get(i).getId()) index=i;
-        if(index==-1)
+            if (id == dentistPatients.get(i).getId()) found=i;
+        if(found==-1)
             throw new RuntimeException("Id not found...");
         else
-            dentistPatients.remove(index);
+            dentistPatients.remove(found);
 
     }
 
-    @Override
-    public String toString()
-    {
-        String n="";
-        for(int i=0;i<dentistPatients.size();i++)
-            n=n+dentistPatients.get(i);
-        return n;
-    }
-
-    @Override
-    public String Swapped(String st)
-    {
-        String[] d=st.split("/");
-        List l=Arrays.asList(d);
-        if(l.size()>1) {
-            Collections.swap(l, 0, 2);
-            String returned_string;
-            returned_string = l.get(0).toString() + "/" + l.get(1).toString() + "/" + l.get(2).toString();
-            return returned_string;
-        }
-        else
-            return st;
-    }
 
     @Override
     public ArrayList<Patient> getRepo()
     {
         return dentistPatients;
     }
-
-
-
-
 
 
 }

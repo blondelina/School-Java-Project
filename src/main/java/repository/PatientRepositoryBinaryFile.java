@@ -4,6 +4,8 @@ import model.Patient;
 import repository.PatientRepository;
 
 import java.io.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 
 public class PatientRepositoryBinaryFile extends PatientRepository {
@@ -55,20 +57,7 @@ public class PatientRepositoryBinaryFile extends PatientRepository {
     }
 
     @Override
-    public void addAppointment(int id,String ap_date,String ap_time,String reason)
-    {
-        try {
-            super.addAppointment(id,ap_date,ap_time,reason);
-            writeInFile();
-        }
-        catch(RuntimeException e)
-        {
-            System.out.println(e);
-        }
-    }
-
-    @Override
-    public void cancelAppointment(String ap_date,String ap_time)
+    public void cancelAppointment(LocalDate ap_date, String ap_time)
     {
         try {
             super.cancelAppointment(ap_date,ap_time);

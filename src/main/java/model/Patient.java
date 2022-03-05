@@ -1,15 +1,13 @@
 package model;
-
-import model.Appointment;
-
 import java.io.Serializable;
+import java.time.LocalDate;
 
 
 public class Patient implements Serializable{
     private String firstName;
     private String lastName;
     private int id;
-    Appointment appointment= new Appointment();
+    private final Appointment appointment= new Appointment();
     private String phone_number;
 
 
@@ -18,18 +16,17 @@ public class Patient implements Serializable{
         if(firstName.isBlank() || lastName.isBlank() || Integer.toString(id).isBlank())
             throw new RuntimeException("Empty fields...");
 
-
         this.firstName=firstName;
         this.lastName=lastName;
         this.id=id;
         this.phone_number=ph;
-        this.setAppointment_date("");
+        this.setAppointment_date(null);
         this.setAppointment_time("");
         this.setAppointment_reason("");
 
     }
 
-    public Patient(String firstName, String lastName, int id, String ph, String ap_date, String ap_time,String reason)
+    public Patient(String firstName, String lastName, int id, String ph, LocalDate ap_date, String ap_time,String reason)
     {
 
         if(firstName.isBlank() || lastName.isBlank() || Integer.toString(id).isBlank())
@@ -54,11 +51,11 @@ public class Patient implements Serializable{
         this.appointment.setAppointment_time(appointment_time);
     }
 
-    public String getAppointment_date() {
+    public LocalDate getAppointment_date() {
         return appointment.getAppointment_date();
     }
 
-    public void setAppointment_date(String appointment_date) {
+    public void setAppointment_date(LocalDate appointment_date) {
         this.appointment.setAppointment_date(appointment_date);
     }
 
@@ -101,20 +98,5 @@ public class Patient implements Serializable{
     public void setPhone_number(String phone_number) {
         this.phone_number = phone_number;
     }
-
-
-    @Override
-    public String toString()
-    {
-        String s;
-        if(this.appointment.getAppointment_date()=="" && this.appointment.getAppointment_time()=="")
-            s=this.getFirstName()+" "+this.getLastName()+" of id "+this.getId()+"\n";
-        else
-            s=this.getFirstName()+" "+this.getLastName()+" of id "+this.getId()+" appointment on "+
-                    this.getAppointment_date()+" "+this.getAppointment_time()+" and problem: "+this.getAppointment_reason()+"\n";
-        return s;
-    }
-
-
 
 }

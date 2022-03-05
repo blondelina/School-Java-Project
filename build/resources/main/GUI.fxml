@@ -18,7 +18,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="441.0" prefWidth="669.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/13" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.UI">
+<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="441.0" prefWidth="669.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="view.UI">
   <tabs>
     <Tab text="View">
       <content>
@@ -140,12 +140,12 @@
                         <RowConstraints maxHeight="29.599999999999994" minHeight="5.600015258789057" prefHeight="29.599999999999994" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <DatePicker fx:id="d1" prefHeight="26.0" prefWidth="212.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <DatePicker fx:id="delete_date" prefHeight="26.0" prefWidth="212.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                         <Label text="Date" GridPane.rowIndex="2" />
                         <Label text="Hour" />
                         <Label text="Minute" GridPane.rowIndex="1" />
-                        <ComboBox fx:id="hour1" editable="true" prefHeight="26.0" prefWidth="98.0" GridPane.columnIndex="1" />
-                        <ComboBox fx:id="min1" editable="true" prefHeight="26.0" prefWidth="98.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <ComboBox fx:id="delete_hour" editable="true" prefHeight="26.0" prefWidth="98.0" GridPane.columnIndex="1" />
+                        <ComboBox fx:id="delete_min" editable="true" prefHeight="26.0" prefWidth="98.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <Button mnemonicParsing="false" onAction="#CancelAppointment" text="Cancel Appintment" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                         <Label fx:id="errorLabel3" prefHeight="18.0" prefWidth="184.0" textFill="#e83a3a" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                      </children>
