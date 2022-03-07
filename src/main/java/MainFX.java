@@ -14,6 +14,7 @@ public class MainFX extends Application {
         FXMLLoader loader=new FXMLLoader(getClass().getResource("GUI.fxml"));
         Parent root=loader.load();
         Scene scene=new Scene(root);
+        scene.getStylesheets().add("styling.css");
         primaryStage.setScene(scene);
         primaryStage.setTitle("Welcome");
         primaryStage.setResizable(false);
